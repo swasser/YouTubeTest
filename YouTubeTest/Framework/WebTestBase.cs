@@ -10,7 +10,7 @@ namespace YouTubeTest.Framework
     public class WebTestBase
     {
         internal IWebDriver? Driver { get; set; }
-        internal NLog.ILogger Logger { get; set; }
+        internal ILogger Logger { get; set; }
         internal IHost TestHost { get; set; }
 
         internal IConfiguration Configuration { get; set; }
@@ -35,6 +35,7 @@ namespace YouTubeTest.Framework
         public void TearDown()
         {
             Driver?.Dispose();
+            TestHost?.Dispose();
         }
     }
 }

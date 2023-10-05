@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+	<Playwright>
+		<BrowserName>chromium</BrowserName>
+		<!--BrowserName>firefox</BrowserName-->
+		<LaunchOptions>
+			<Headless>false</Headless>
+			<!-->Channel>msedge</Channel-->
+		</LaunchOptions>
+	</Playwright>
+</RunSettings>
