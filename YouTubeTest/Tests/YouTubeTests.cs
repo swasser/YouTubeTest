@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using NUnit.Framework.Internal;
 using YouTubeTest.Framework;
 using YouTubeTest.Pages;
@@ -23,7 +24,7 @@ namespace YouTubeTest.Tests
 
             var artistName = VideoPage.GetArtistName();
 
-            Logger.Info($"Artist name is: {artistName}. ");
+            Logger.Log(LogLevel.Information, "{artistName}", artistName);
         }
     }
 }

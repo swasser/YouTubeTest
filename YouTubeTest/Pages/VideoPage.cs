@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using SeleniumExtras.WaitHelpers;
 
@@ -8,12 +8,15 @@ namespace YouTubeTest.Pages
     {
         By adPlayerOverlayBy = By.ClassName("ytp-ad-player-overlay");
         By artistNameBy = By.XPath("//*[@id='info-rows']//*[@id='title'][contains(text(),'ARTIST')]/..//a[1]");
+        By artistNameEngagmentViewBy = By.CssSelector("#primary ytd-watch-metadata .yt-video-attribute-view-model__subtitle");
+        By commentsBy = By.CssSelector("#comments");
         By noThanksButtonBy = By.CssSelector("button[aria-label='No thanks']");
         By promoOverlayBy = By.Id("main");
-        By showMoreBy = By.Id("expand");
+        By showMoreBy = By.CssSelector("#expand.button");
         By skipAdBy = By.XPath("//*[@class='ytp-ad-text ytp-ad-skip-button-text'][contains(text(),'Skip Ad')]");
+        By videoDescriptionEngagementViewBy = By.CssSelector("#primary ytd-watch-metadata [card-list-style='HORIZONTAL_CARD_LIST_STYLE_TYPE_ENGAGEMENT_PANEL_SECTION']");
 
-        public VideoPage(IWebDriver driver, ILogger logger) : base(driver, logger) { }
+        public VideoPage(IWebDriver driver, ILogger<BasePage> logger) : base(driver, logger) { }
 
         public VideoPage SkipAds()
         {
@@ -35,13 +38,25 @@ namespace YouTubeTest.Pages
 
         public string GetArtistName()
         {
+            var waitForCommentsToLoad = ShortWait.Until(ExpectedConditions.ElementIsVisible(commentsBy));
+
             ClosePromo();
 
-            var expand = ShortWait.Until(ExpectedConditions.ElementToBeClickable(showMoreBy));
+            var expand = ShortWait.Until(ExpectedConditions.ElementIsVisible(showMoreBy));
 
             expand.Click();
 
-            var artist = ShortWait.Until(ExpectedConditions.ElementIsVisible(artistNameBy));
+            IWebElement artist = null!;
+
+            try
+            {
+                artist = ShortWait.Until(ExpectedConditions.ElementIsVisible(artistNameBy));
+            }
+            catch (WebDriverTimeoutException)
+            {
+                ShortWait.Until(ExpectedConditions.ElementIsVisible(videoDescriptionEngagementViewBy));
+                artist = ShortWait.Until(ExpectedConditions.ElementIsVisible(artistNameEngagmentViewBy));
+            }
 
             return artist.Text;
         }

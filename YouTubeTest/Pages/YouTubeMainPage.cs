@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using SeleniumExtras.WaitHelpers;
 
@@ -8,7 +8,7 @@ namespace YouTubeTest.Pages
     {
         By searchBoxBy = By.XPath("//input[@id='search']");
 
-        public YouTubeMainPage(IWebDriver driver, ILogger logger) : base(driver, logger) {}
+        public YouTubeMainPage(IWebDriver driver, ILogger<BasePage> logger) : base(driver, logger) {}
                  
         public SearchResultsPage Search(string searchText)
         {

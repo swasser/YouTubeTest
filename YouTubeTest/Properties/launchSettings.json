@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "YouTubeTest": {
+      "commandName": "Project",
+      "hotReloadEnabled": false
+    }
+  }
+}

@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NLog;
 using NLog.Extensions.Logging;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -11,31 +9,49 @@ namespace YouTubeTest.Framework
 {
     internal static class WebTestHost
     {
-        internal static IHost TestHostStart()
+        internal static IServiceProvider TestServiceProvider()
         {
-            Logger logger = NLog.LogManager.Setup().LoadConfigurationFromFile().GetCurrentClassLogger();
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .Build();
 
-            var builder = new HostBuilder().ConfigureServices(services =>
-            {
-                services.AddTransient<IWebDriver, ChromeDriver>().
-                AddLogging(logbuilder =>
+            var serviceProvider = new ServiceCollection()
+                .AddSingleton<IConfiguration>(config)
+                .AddTransient<IWebDriver, ChromeDriver>()
+                .AddLogging(loggingBuilder =>
                 {
-                    logbuilder.ClearProviders();
-                    logbuilder.AddNLog();
-                });
-            }
-            );
+                    loggingBuilder.ClearProviders();
+                    loggingBuilder.AddNLog(config);
+                }).BuildServiceProvider();
 
-            builder.ConfigureAppConfiguration(config =>
-                config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                );
-
-            return builder.Build();
+            return serviceProvider;
         }
+
+    //    internal static IHost TestHostStart()
+    //    {
+    //        //Logger logger = LogManager.Setup().LoadConfigurationFromFile().GetCurrentClassLogger();
+
+    //        var builder = new HostBuilder().ConfigureServices(services =>
+    //        {
+    //            services.AddTransient<IWebDriver, ChromeDriver>().
+    //            AddLogging(logbuilder =>
+    //            {
+    //                logbuilder.ClearProviders();
+    //                logbuilder.AddNLog();
+    //            });
+    //        }
+    //        );
+
+    //        builder.ConfigureAppConfiguration(config =>
+    //            config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    //            );
+
+    //        return builder.Build();
+    //    }
         
-        internal static IWebDriver GetDriver(IHost host)
-        {
-            return host.Services.GetRequiredService<IWebDriver>();
-        }
+    //    internal static IWebDriver GetDriver(IHost host)
+    //    {
+    //        return host.Services.GetRequiredService<IWebDriver>();
+    //    }
     }
 }

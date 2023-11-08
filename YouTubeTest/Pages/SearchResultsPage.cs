@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using SeleniumExtras.WaitHelpers;
 
@@ -12,7 +12,7 @@ namespace YouTubeTest.Pages
         By videoFilterBy = By.XPath("//*[@id='label'][@title='Search for Video']");
         By videoItemBy = By.XPath("//ytd-video-renderer//a[@id='thumbnail']");
  
-        public SearchResultsPage(IWebDriver driver, ILogger logger) : base(driver, logger) { }
+        public SearchResultsPage(IWebDriver driver, ILogger<BasePage> logger) : base(driver, logger){ }
 
         public SearchResultsPage FilterByVideo()
         {
@@ -40,8 +40,6 @@ namespace YouTubeTest.Pages
 
         public VideoPage SearchVideoByUrl(string url)
         {
-            //Thread.Sleep(1000);
-            
             var videoTitles = Driver.FindElements(videoItemBy);
 
             var selectedTitle = videoTitles.Where(x =>
@@ -52,7 +50,7 @@ namespace YouTubeTest.Pages
 
             var channel = video?.FindElement(channelNameBy).Text;
 
-            Logger.Info($"Channel name is: {channel}. ");
+            Logger.Log(Microsoft.Extensions.Logging.LogLevel.Information, "{channel}", channel);
 
             video?.Click();
 
